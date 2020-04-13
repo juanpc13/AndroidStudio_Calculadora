@@ -77,20 +77,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    public String editOperator(String str, String newOpe){
+    //Edita el ultimo operador de la cadena de historico
+    public String editLast(String str, String newOpe){
         if (str.isEmpty()){
             return "";
         }
 
         String result = str;
         if ((str != null) && (str.length() > 0)) {
-            result = str.substring(0, str.length() - 2);
-            result += result + newOpe + " ";
+            result = str.substring(0, str.length() - 1);
+            result += newOpe;
         }
         return result;
     }
 
-    public boolean needsToClearInput(int lastButton){
+    public boolean isButtonOperator(int lastButton){
         int operatations[] = {R.id.btnSuma, R.id.btnResta, R.id.btnMultiplicacion, R.id.btnDivision};
         for (int i = 0; i < operatations.length; i++) {
             if(operatations[i] == lastButton){
@@ -113,8 +114,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         int currentBtn  = v.getId();
+        String edited = "";
 
-        if(needsToClearInput(lastBnt) && isButtonNumber(currentBtn)){
+        //Necesita refrescar el campo de resultado needsToClearInput
+        if(isButtonOperator(lastBnt) && isButtonNumber(currentBtn)){
             txtResultado.setText("");
         }
 
@@ -165,13 +168,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 operator = "+";
                 if(lastBnt != R.id.btnSuma){
 
-                    if(validInput(txtResultado.getText().toString())){
-                        txtHistorico.setText(txtHistorico.getText().toString() + (txtHistorico.getText().length()==0?"":" + ") + txtResultado.getText());
+                    if(isButtonOperator(currentBtn) && isButtonOperator(lastBnt)){
+                        edited = editLast(txtHistorico.getText().toString(), operator);
+                        txtHistorico.setText(edited);
+                    }else if(validInput(txtResultado.getText().toString())){
+                        //txtHistorico.setText(txtHistorico.getText().toString() + (txtHistorico.getText().length()==0?"":" + ") + txtResultado.getText());
+                        txtHistorico.setText(txtHistorico.getText().toString() + txtResultado.getText() + "+");
                     }
 
                 }
                 break;
+            case R.id.btnResta:
+                operator = "-";
+                if(lastBnt != R.id.btnResta){
+
+                    if(isButtonOperator(currentBtn) && isButtonOperator(lastBnt)){
+                        edited = editLast(txtHistorico.getText().toString(), operator);
+                        txtHistorico.setText(edited);
+                    }else if(validInput(txtResultado.getText().toString())){
+                        txtHistorico.setText(txtHistorico.getText().toString() + txtResultado.getText() + "+");
+                    }
+
+                    edited = editLast(txtHistorico.getText().toString(), operator);
+                    txtHistorico.setText(edited);
+
+                }
+                break;
         }
+
         lastBnt = currentBtn;
     }
 }
