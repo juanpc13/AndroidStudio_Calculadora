@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String result = str;
         if ((str != null) && (str.length() > 0)) {
-            result = str.substring(0, str.length() - 1);
-            result += newOpe;
+            result = str.substring(0, str.length() - 3);
+            result += " " + newOpe + " ";
         }
         return result;
     }
@@ -172,8 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         edited = editLast(txtHistorico.getText().toString(), operator);
                         txtHistorico.setText(edited);
                     }else if(validInput(txtResultado.getText().toString())){
-                        //txtHistorico.setText(txtHistorico.getText().toString() + (txtHistorico.getText().length()==0?"":" + ") + txtResultado.getText());
-                        txtHistorico.setText(txtHistorico.getText().toString() + txtResultado.getText() + "+");
+                        txtHistorico.setText(txtHistorico.getText().toString() + txtResultado.getText() + " " + operator + " ");
                     }
 
                 }
@@ -186,14 +185,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         edited = editLast(txtHistorico.getText().toString(), operator);
                         txtHistorico.setText(edited);
                     }else if(validInput(txtResultado.getText().toString())){
-                        txtHistorico.setText(txtHistorico.getText().toString() + txtResultado.getText() + "+");
+                        txtHistorico.setText(txtHistorico.getText().toString() + txtResultado.getText() + " " + operator + " ");
                     }
-
-                    edited = editLast(txtHistorico.getText().toString(), operator);
-                    txtHistorico.setText(edited);
 
                 }
                 break;
+            case R.id.btnMultiplicacion:
+                operator = "X";
+                if(lastBnt != R.id.btnResta){
+
+                    if(isButtonOperator(currentBtn) && isButtonOperator(lastBnt)){
+                        edited = editLast(txtHistorico.getText().toString(), operator);
+                        txtHistorico.setText(edited);
+                    }else if(validInput(txtResultado.getText().toString())){
+                        txtHistorico.setText(txtHistorico.getText().toString() + txtResultado.getText() + " " + operator + " ");
+                    }
+
+                }
+                break;
+            case R.id.btnDivision:
+                operator = "/";
+                if(lastBnt != R.id.btnResta){
+
+                    if(isButtonOperator(currentBtn) && isButtonOperator(lastBnt)){
+                        edited = editLast(txtHistorico.getText().toString(), operator);
+                        txtHistorico.setText(edited);
+                    }else if(validInput(txtResultado.getText().toString())){
+                        txtHistorico.setText(txtHistorico.getText().toString() + txtResultado.getText() + " " + operator + " ");
+                    }
+
+                }
+                break;
+
         }
 
         lastBnt = currentBtn;
