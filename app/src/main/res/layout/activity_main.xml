@@ -9,7 +9,7 @@
 
     <EditText
         android:id="@+id/txtHistorico"
-        android:layout_width="380dp"
+        android:layout_width="350dp"
         android:layout_height="50dp"
         android:clickable="false"
         android:ems="10"
@@ -17,6 +17,7 @@
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.393"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.067" />
@@ -32,7 +33,7 @@
         android:inputType="text"
         android:text="@string/historico"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintHorizontal_bias="0.074"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
