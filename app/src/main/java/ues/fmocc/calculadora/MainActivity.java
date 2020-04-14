@@ -110,6 +110,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
+    public void operation(String historico, int currentBtn, int lastBnt, String operator){
+        if(clearEquals){
+            historico = txtResultado.getText().toString();
+            historico += operator;
+            clearEquals = false;
+        }else if(lastBnt != R.id.btnSuma){            //Si el boton se repite no hacer nada
+
+            //Si el anterior y el nuevo son botones operador solo sustituir la operacion
+            if(isButtonOperator(lastBnt) && isButtonOperator(currentBtn)){
+                historico = removeFromString(historico, 3);
+                if(!historico.isEmpty()){
+                    historico += operator;
+                }
+            }else if(validInput(txtResultado.getText().toString())){
+                historico += txtResultado.getText().toString();
+                historico += operator;
+            }
+
+        }
+        txtHistorico.setText(historico);
+    }
+
     public double solveString(final String str){
         return new Object() {
             int pos = -1, ch;
@@ -152,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             double parseTerm() {
                 double x = parseFactor();
                 for (;;) {
-                    if      (eat('*')) x *= parseFactor(); // multiplication
+                    if      (eat('X')) x *= parseFactor(); // multiplication
                     else if (eat('/')) x /= parseFactor(); // division
                     else return x;
                 }
@@ -199,10 +221,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             txtResultado.setText("");
         }
 
-        //Si luego de Operar pasa a un numero Vaciar todo
+        //Vaciar el Resultado si ha presionado el boton de IGUAL antes y el nuevo es un numero
         if(lastBnt == R.id.btnIgual && isButtonNumber(currentBtn)){
             txtResultado.setText("");
-            txtHistorico.setText("");
         }
 
         String historico = txtHistorico.getText().toString();
@@ -252,102 +273,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btnSuma:
                 operator = " + ";
-                if(clearEquals){
-                    historico = removeFromString(historico, 3);
-                    historico += operator;
-                    clearEquals = false;
-                }
-
-                //Si el boton se repite no hacer nada
-                if(lastBnt != R.id.btnSuma){
-
-                    //Si el anterior y el nuevo son botones operador solo sustituir la operacion
-                    if(isButtonOperator(lastBnt) && isButtonOperator(currentBtn)){
-                        historico = removeFromString(historico, 3);
-                        historico += operator;
-                    }else if(validInput(txtResultado.getText().toString())){
-                        historico += txtResultado.getText().toString();
-                        historico += operator;
-                    }
-
-                }
-                txtHistorico.setText(historico);
+                operation(historico, currentBtn, lastBnt, operator);
                 break;
             case R.id.btnResta:
                 operator = " - ";
-                if(clearEquals){
-                    historico = removeFromString(historico, 3);
-                    historico += operator;
-                    clearEquals = false;
-                }
-
-                //Si el boton se repite no hacer nada
-                if(lastBnt != R.id.btnSuma){
-
-                    //Si el anterior y el nuevo son botones operador solo sustituir la operacion
-                    if(isButtonOperator(lastBnt) && isButtonOperator(currentBtn)){
-                        historico = removeFromString(historico, 3);
-                        historico += operator;
-                    }else if(validInput(txtResultado.getText().toString())){
-                        historico += txtResultado.getText().toString();
-                        historico += operator;
-                    }
-
-                }
-                txtHistorico.setText(historico);
+                operation(historico, currentBtn, lastBnt, operator);
                 break;
 
             case R.id.btnMultiplicacion:
-                operator = " * ";
-                if(clearEquals){
-                    historico = removeFromString(historico, 3);
-                    historico += operator;
-                    clearEquals = false;
-                }
-
-                //Si el boton se repite no hacer nada
-                if(lastBnt != R.id.btnMultiplicacion){
-
-                    //Si el anterior y el nuevo son botones operador solo sustituir la operacion
-                    if(isButtonOperator(lastBnt) && isButtonOperator(currentBtn)){
-                        historico = removeFromString(historico, 3);
-                        historico += operator;
-                    }else if(validInput(txtResultado.getText().toString())){
-                        historico += txtResultado.getText().toString();
-                        historico += operator;
-                    }
-
-                }
-                txtHistorico.setText(historico);
+                operator = " X ";
+                operation(historico, currentBtn, lastBnt, operator);
                 break;
             case R.id.btnDivision:
                 operator = " / ";
-                if(clearEquals){
-                    historico = removeFromString(historico, 3);
-                    historico += operator;
-                    clearEquals = false;
-                }
-
-                //Si el boton se repite no hacer nada
-                if(lastBnt != R.id.btnDivision){
-
-                    //Si el anterior y el nuevo son botones operador solo sustituir la operacion
-                    if(isButtonOperator(lastBnt) && isButtonOperator(currentBtn)){
-                        historico = removeFromString(historico, 3);
-                        historico += operator;
-                    }else if(validInput(txtResultado.getText().toString())){
-                        historico += txtResultado.getText().toString();
-                        historico += operator;
-                    }
-
-                }
-                txtHistorico.setText(historico);
+                operation(historico, currentBtn, lastBnt, operator);
                 break;
             case R.id.btnIgual:
                 operator = " = ";
                 String ecuacion = "";
                 //Esto hace que se agrege el ultimo valor del campo resultado si lo amerita
-                if(isButtonNumber(lastBnt)){
+                if(clearEquals){
+                    historico = txtResultado.getText().toString();
+                    historico += operator;
+                    clearEquals = false;
+                }else if(isButtonNumber(lastBnt)){
                     historico += txtResultado.getText().toString();
                     historico += operator;
                 }else{
