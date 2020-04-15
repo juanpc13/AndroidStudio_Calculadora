@@ -20,6 +20,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String secondOperator;
     private int lastBnt;
     private boolean clearEquals = false;
+    private boolean enable = true;
+
+    private Button powerBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((Button) findViewById(R.id.btnMultiplicacion)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnDivision)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnClear)).setOnClickListener(this);
-        ((Button) findViewById(R.id.btnPower)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnCuadrado)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnRaiz)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnIgual)).setOnClickListener(this);
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((Button) findViewById(R.id.btnSen)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnTan)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnInvert)).setOnClickListener(this);
+
+        powerBtn = findViewById(R.id.btnPower);
+        powerBtn.setOnClickListener(this);
 
         operator = "";
         lastBnt = 0;
@@ -252,149 +257,183 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         int currentBtn  = v.getId();
 
-        //Necesita refrescar el campo de resultado needsToClearInput
-        if(isButtonOperator(lastBnt) && isButtonNumber(currentBtn)){
-            txtResultado.setText("");
+        if(currentBtn == R.id.btnPower){
+            enable = !enable;
+            if(enable){
+                powerBtn.setText("ON");
+                showMessage("Calculadora Encendida");
+            }else{
+                powerBtn.setText("OFF");
+                showMessage("Calculadora Apagada");
+            }
         }
 
-        //Vaciar el Resultado si ha presionado el boton de IGUAL antes y el nuevo es un numero
-        if(lastBnt == R.id.btnIgual && isButtonNumber(currentBtn)){
-            txtResultado.setText("");
-        }
-
-        String historico = txtHistorico.getText().toString();
-
-        switch (currentBtn) {
-            case R.id.btn0:
-                txtResultado.setText(txtResultado.getText() + "0");
-                break;
-            case R.id.btn1:
-                txtResultado.setText(txtResultado.getText() + "1");
-                break;
-            case R.id.btn2:
-                txtResultado.setText(txtResultado.getText() + "2");
-                break;
-            case R.id.btn3:
-                txtResultado.setText(txtResultado.getText() + "3");
-                break;
-            case R.id.btn4:
-                txtResultado.setText(txtResultado.getText() + "4");
-                break;
-            case R.id.btn5:
-                txtResultado.setText(txtResultado.getText() + "5");
-                break;
-            case R.id.btn6:
-                txtResultado.setText(txtResultado.getText() + "6");
-                break;
-            case R.id.btn7:
-                txtResultado.setText(txtResultado.getText() + "7");
-                break;
-            case R.id.btn8:
-                txtResultado.setText(txtResultado.getText() + "8");
-                break;
-            case R.id.btn9:
-                txtResultado.setText(txtResultado.getText() + "9");
-                break;
-            case R.id.btnDot:
-                if(letDecimal(txtResultado.getText().toString())){
-                    txtResultado.setText(txtResultado.getText() + ".");
-                }
-                break;
-            case R.id.btnRaiz:
-                firstOperator = " sqrt(";
-                secondOperator = ")";
-                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
-                break;
-            case R.id.btnCuadrado:
-                firstOperator = " (";
-                secondOperator = ")^2";
-                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
-                break;
-            case R.id.btnCos:
-                firstOperator = " cos(";
-                secondOperator = ")";
-                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
-                break;
-            case R.id.btnSen:
-                firstOperator = " sin(";
-                secondOperator = ")";
-                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
-                break;
-            case R.id.btnTan:
-                firstOperator = " tan(";
-                secondOperator = ")";
-                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
-                break;
-            case R.id.btnClear:
+        if(enable){
+            //Necesita refrescar el campo de resultado needsToClearInput
+            if(isButtonOperator(lastBnt) && isButtonNumber(currentBtn)){
                 txtResultado.setText("");
-                txtHistorico.setText("");
-                break;
-            case R.id.btnBorrar:
-                txtResultado.setText(removeLastCharacter(txtResultado.getText().toString()));
-                break;
-            case R.id.btnSuma:
-                operator = " + ";
-                operation(historico, currentBtn, lastBnt, operator);
-                break;
-            case R.id.btnResta:
-                operator = " - ";
-                operation(historico, currentBtn, lastBnt, operator);
-                break;
+            }
 
-            case R.id.btnMultiplicacion:
-                operator = " X ";
-                operation(historico, currentBtn, lastBnt, operator);
-                break;
-            case R.id.btnDivision:
-                operator = " / ";
-                operation(historico, currentBtn, lastBnt, operator);
-                break;
-            case R.id.btnIgual:
-                operator = " = ";
-                String ecuacion = "";
+            //Vaciar el Resultado si ha presionado el boton de IGUAL antes y el nuevo es un numero
+            if(lastBnt == R.id.btnIgual && isButtonNumber(currentBtn)){
+                txtResultado.setText("");
+            }
 
-                //Evitar que este vacio
-                if(txtResultado.getText().toString().isEmpty()){
-                    currentBtn = 0;
-                    showMessage("Favor Ingrese algun valor numerico");
+            String historico = txtHistorico.getText().toString();
+
+            switch (currentBtn) {
+                case R.id.btn0:
+                    txtResultado.setText(txtResultado.getText() + "0");
                     break;
-                }
+                case R.id.btn1:
+                    txtResultado.setText(txtResultado.getText() + "1");
+                    break;
+                case R.id.btn2:
+                    txtResultado.setText(txtResultado.getText() + "2");
+                    break;
+                case R.id.btn3:
+                    txtResultado.setText(txtResultado.getText() + "3");
+                    break;
+                case R.id.btn4:
+                    txtResultado.setText(txtResultado.getText() + "4");
+                    break;
+                case R.id.btn5:
+                    txtResultado.setText(txtResultado.getText() + "5");
+                    break;
+                case R.id.btn6:
+                    txtResultado.setText(txtResultado.getText() + "6");
+                    break;
+                case R.id.btn7:
+                    txtResultado.setText(txtResultado.getText() + "7");
+                    break;
+                case R.id.btn8:
+                    txtResultado.setText(txtResultado.getText() + "8");
+                    break;
+                case R.id.btn9:
+                    txtResultado.setText(txtResultado.getText() + "9");
+                    break;
+                case R.id.btnDot:
+                    if(letDecimal(txtResultado.getText().toString())){
+                        txtResultado.setText(txtResultado.getText() + ".");
+                    }
+                    break;
+                case R.id.btnRaiz:
+                    firstOperator = " sqrt(";
+                    secondOperator = ")";
+                    operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
+                    break;
+                case R.id.btnCuadrado:
+                    firstOperator = " (";
+                    secondOperator = ")^2";
+                    operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
+                    break;
+                case R.id.btnCos:
+                    firstOperator = " cos(";
+                    secondOperator = ")";
+                    operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
+                    break;
+                case R.id.btnSen:
+                    firstOperator = " sin(";
+                    secondOperator = ")";
+                    operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
+                    break;
+                case R.id.btnTan:
+                    firstOperator = " tan(";
+                    secondOperator = ")";
+                    operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
+                    break;
+                case R.id.btnClear:
+                    txtResultado.setText("");
+                    txtHistorico.setText("");
+                    break;
+                case R.id.btnInvert:
+                    //Evitar que este vacio
+                    if(txtResultado.getText().toString().isEmpty()){
+                        currentBtn = 0;
+                        showMessage("Favor Ingrese algun valor numerico");
+                    }else{
+                        String invertTxt = historico;
+                        if(isButtonOperator(lastBnt) || isButtonEspecial(lastBnt) || lastBnt == R.id.btnIgual){
+                            invertTxt = removeFromString(invertTxt, 3);
+                        }else{
+                            invertTxt = txtResultado.getText().toString();
+                        }
+                        invertTxt = "1 / " + invertTxt + " = ";
+                        txtHistorico.setText(invertTxt);
+                        invertTxt = removeFromString(invertTxt, 3);
+                        Double invert = (Double) solveString(invertTxt);
+                        invertTxt =  String.format("%.4f", invert);
+                        txtResultado.setText(invertTxt);
+                    }
+                    break;
+                case R.id.btnBorrar:
+                    txtResultado.setText(removeLastCharacter(txtResultado.getText().toString()));
+                    break;
+                case R.id.btnSuma:
+                    operator = " + ";
+                    operation(historico, currentBtn, lastBnt, operator);
+                    break;
+                case R.id.btnResta:
+                    operator = " - ";
+                    operation(historico, currentBtn, lastBnt, operator);
+                    break;
 
-                //Esto hace que se agrege el ultimo valor del campo resultado si lo amerita
-                if(clearEquals){
-                    if (isButtonEspecial(lastBnt)){
-                        historico = firstOperator + txtResultado.getText().toString() + secondOperator;
+                case R.id.btnMultiplicacion:
+                    operator = " X ";
+                    operation(historico, currentBtn, lastBnt, operator);
+                    break;
+                case R.id.btnDivision:
+                    operator = " / ";
+                    operation(historico, currentBtn, lastBnt, operator);
+                    break;
+                case R.id.btnIgual:
+                    operator = " = ";
+                    String ecuacion = "";
+
+                    //Evitar que este vacio
+                    if(txtResultado.getText().toString().isEmpty()){
+                        currentBtn = 0;
+                        showMessage("Favor Ingrese algun valor numerico");
+                        break;
+                    }
+
+                    //Esto hace que se agrege el ultimo valor del campo resultado si lo amerita
+                    if(clearEquals){
+                        if (isButtonEspecial(lastBnt)){
+                            historico = firstOperator + txtResultado.getText().toString() + secondOperator;
+                            historico += operator;
+                        }else{
+                            historico = txtResultado.getText().toString();
+                            historico += operator;
+                        }
+                        clearEquals = false;
+                    }else if(isButtonNumber(lastBnt)){
+                        historico += txtResultado.getText().toString();
                         historico += operator;
                     }else{
-                        historico = txtResultado.getText().toString();
+                        historico = removeFromString(historico, 3);
                         historico += operator;
                     }
-                    clearEquals = false;
-                }else if(isButtonNumber(lastBnt)){
-                    historico += txtResultado.getText().toString();
-                    historico += operator;
-                }else{
-                    historico = removeFromString(historico, 3);
-                    historico += operator;
-                }
-                txtHistorico.setText(historico);
-                ecuacion = removeFromString(historico, 3);
-                Double result = (Double) solveString(ecuacion);
-                ecuacion =  String.format("%.4f", result);
-                if (ecuacion.equals("Infinity")){
-                    showMessage("El resultado tiende al Infinito");
-                    txtResultado.setText("");
-                }else if (ecuacion.equals("NaN")){
-                    showMessage("El resultado es Indefinido");
-                    txtResultado.setText("");
-                }else{
-                    txtResultado.setText(ecuacion);
-                }
+                    txtHistorico.setText(historico);
+                    ecuacion = removeFromString(historico, 3);
+                    Double result = (Double) solveString(ecuacion);
+                    ecuacion =  String.format("%.4f", result);
+                    if (ecuacion.equals("Infinity")){
+                        showMessage("El resultado tiende al Infinito");
+                        txtResultado.setText("");
+                    }else if (ecuacion.equals("NaN")){
+                        showMessage("El resultado es Indefinido");
+                        txtResultado.setText("");
+                    }else{
+                        txtResultado.setText(ecuacion);
+                    }
 
-                clearEquals = true;
-                break;
+                    clearEquals = true;
+                    break;
+            }
+
+            lastBnt = currentBtn;
+
         }
-
-        lastBnt = currentBtn;
     }
 }
