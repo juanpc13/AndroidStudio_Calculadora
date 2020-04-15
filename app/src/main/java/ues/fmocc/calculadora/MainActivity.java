@@ -2,10 +2,12 @@ package ues.fmocc.calculadora;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -14,6 +16,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Datos para recordar seleccion
     private String operator;
+    private String especialOperator;
     private int lastBnt;
     private boolean clearEquals = false;
 
@@ -43,6 +46,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         operator = "";
         lastBnt = 0;
 
+    }
+
+    public void showMessage(String text){
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 
     private boolean letDecimal(String cadena){
@@ -79,19 +89,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public String removeFromString(String str, int times){
-        if (str.isEmpty()){
-            return "";
-        }
-
-        String result = str;
-        if ((str != null) && (str.length() > 0)) {
-            result = str.substring(0, str.length() - times);
+        String result = "";
+        for (int i = 0; i < str.length() - times; i++) {
+            result += str.charAt(i);
         }
         return result;
     }
 
     public boolean isButtonOperator(int lastButton){
-        int operatations[] = {R.id.btnSuma, R.id.btnResta, R.id.btnMultiplicacion, R.id.btnDivision};
+        int operatations[] = {R.id.btnSuma, R.id.btnResta, R.id.btnMultiplicacion, R.id.btnDivision, R.id.btnCuadrado};
+        for (int i = 0; i < operatations.length; i++) {
+            if(operatations[i] == lastButton){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isButtonEspecial(int lastButton){
+        int operatations[] = {R.id.btnCuadrado, R.id.btnRaiz};
         for (int i = 0; i < operatations.length; i++) {
             if(operatations[i] == lastButton){
                 return true;
@@ -115,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             historico = txtResultado.getText().toString();
             historico += operator;
             clearEquals = false;
-        }else if(lastBnt != R.id.btnSuma){            //Si el boton se repite no hacer nada
+        }else if(lastBnt != currentBtn){            //Si el boton se repite no hacer nada
 
             //Si el anterior y el nuevo son botones operador solo sustituir la operacion
             if(isButtonOperator(lastBnt) && isButtonOperator(currentBtn)){
@@ -129,6 +145,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
+        txtHistorico.setText(historico);
+    }
+
+    public void operationEspecial(String historico, int currentBtn, int lastBnt, String operator, String extraOperator){
+        historico = removeFromString(historico, 3);
+        if(!txtHistorico.getText().toString().isEmpty()){
+            historico += " + ";
+        }
+        historico += operator + txtResultado.getText().toString() + extraOperator;
+        historico += " + ";
         txtHistorico.setText(historico);
     }
 
@@ -264,6 +290,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     txtResultado.setText(txtResultado.getText() + ".");
                 }
                 break;
+            case R.id.btnRaiz:
+                operator = " sqrt(";
+                especialOperator = operator;
+                operationEspecial(historico, currentBtn, lastBnt, operator, ")");
+                break;
+            case R.id.btnCuadrado:
+                operator = " (";
+                especialOperator = operator;
+                operationEspecial(historico, currentBtn, lastBnt, operator, ")^2");
+                break;
             case R.id.btnClear:
                 txtResultado.setText("");
                 txtHistorico.setText("");
@@ -291,10 +327,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnIgual:
                 operator = " = ";
                 String ecuacion = "";
+
+                //Evitar que este vacio
+                if(txtResultado.getText().toString().isEmpty()){
+                    currentBtn = 0;
+                    showMessage("Favor Ingrese algun valor numerico");
+                    break;
+                }
+
                 //Esto hace que se agrege el ultimo valor del campo resultado si lo amerita
                 if(clearEquals){
-                    historico = txtResultado.getText().toString();
-                    historico += operator;
+                    if (isButtonEspecial(lastBnt)){
+                        historico = especialOperator + txtResultado.getText().toString() + especialOperator;
+                        historico += operator;
+                    }else{
+                        historico = txtResultado.getText().toString();
+                        historico += operator;
+                    }
                     clearEquals = false;
                 }else if(isButtonNumber(lastBnt)){
                     historico += txtResultado.getText().toString();
@@ -305,7 +354,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 txtHistorico.setText(historico);
                 ecuacion = removeFromString(historico, 3);
-                txtResultado.setText(solveString(ecuacion) + "");
+                Double result = (Double) solveString(ecuacion);
+                ecuacion =  String.format("%.4f", result);
+                if (ecuacion.equals("Infinity")){
+                    showMessage("El resultado tiende al Infinito");
+                    txtResultado.setText("");
+                }else{
+                    txtResultado.setText(ecuacion);
+                }
+
                 clearEquals = true;
                 break;
         }
