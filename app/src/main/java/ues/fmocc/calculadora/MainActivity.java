@@ -16,7 +16,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Datos para recordar seleccion
     private String operator;
-    private String especialOperator;
+    private String firstOperator;
+    private String secondOperator;
     private int lastBnt;
     private boolean clearEquals = false;
 
@@ -42,6 +43,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((Button) findViewById(R.id.btnRaiz)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnIgual)).setOnClickListener(this);
         ((Button) findViewById(R.id.btnBorrar)).setOnClickListener(this);
+        ((Button) findViewById(R.id.btnCos)).setOnClickListener(this);
+        ((Button) findViewById(R.id.btnSen)).setOnClickListener(this);
+        ((Button) findViewById(R.id.btnTan)).setOnClickListener(this);
+        ((Button) findViewById(R.id.btnInvert)).setOnClickListener(this);
 
         operator = "";
         lastBnt = 0;
@@ -107,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean isButtonEspecial(int lastButton){
-        int operatations[] = {R.id.btnCuadrado, R.id.btnRaiz};
+        int operatations[] = {R.id.btnCuadrado, R.id.btnRaiz, R.id.btnCos, R.id.btnSen, R.id.btnTan};
         for (int i = 0; i < operatations.length; i++) {
             if(operatations[i] == lastButton){
                 return true;
@@ -134,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if(lastBnt != currentBtn){            //Si el boton se repite no hacer nada
 
             //Si el anterior y el nuevo son botones operador solo sustituir la operacion
-            if(isButtonOperator(lastBnt) && isButtonOperator(currentBtn)){
+            if(isButtonOperator(lastBnt) && isButtonOperator(currentBtn) || isButtonEspecial(lastBnt)){
                 historico = removeFromString(historico, 3);
                 if(!historico.isEmpty()){
                     historico += operator;
@@ -148,12 +153,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtHistorico.setText(historico);
     }
 
-    public void operationEspecial(String historico, int currentBtn, int lastBnt, String operator, String extraOperator){
+    public void operationEspecial(String historico, int currentBtn, int lastBnt, String firstOperator, String secondOperator){
+        if(txtResultado.getText().toString().isEmpty()){
+            showMessage("Favor Ingrese algun valor numerico");
+            currentBtn = 0;
+            return;
+        }
         historico = removeFromString(historico, 3);
         if(!txtHistorico.getText().toString().isEmpty()){
             historico += " + ";
         }
-        historico += operator + txtResultado.getText().toString() + extraOperator;
+        historico += firstOperator + txtResultado.getText().toString() + secondOperator;
         historico += " + ";
         txtHistorico.setText(historico);
     }
@@ -291,14 +301,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btnRaiz:
-                operator = " sqrt(";
-                especialOperator = operator;
-                operationEspecial(historico, currentBtn, lastBnt, operator, ")");
+                firstOperator = " sqrt(";
+                secondOperator = ")";
+                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
                 break;
             case R.id.btnCuadrado:
-                operator = " (";
-                especialOperator = operator;
-                operationEspecial(historico, currentBtn, lastBnt, operator, ")^2");
+                firstOperator = " (";
+                secondOperator = ")^2";
+                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
+                break;
+            case R.id.btnCos:
+                firstOperator = " cos(";
+                secondOperator = ")";
+                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
+                break;
+            case R.id.btnSen:
+                firstOperator = " sin(";
+                secondOperator = ")";
+                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
+                break;
+            case R.id.btnTan:
+                firstOperator = " tan(";
+                secondOperator = ")";
+                operationEspecial(historico, currentBtn, lastBnt, firstOperator, secondOperator);
                 break;
             case R.id.btnClear:
                 txtResultado.setText("");
@@ -338,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Esto hace que se agrege el ultimo valor del campo resultado si lo amerita
                 if(clearEquals){
                     if (isButtonEspecial(lastBnt)){
-                        historico = especialOperator + txtResultado.getText().toString() + especialOperator;
+                        historico = firstOperator + txtResultado.getText().toString() + secondOperator;
                         historico += operator;
                     }else{
                         historico = txtResultado.getText().toString();
@@ -358,6 +383,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ecuacion =  String.format("%.4f", result);
                 if (ecuacion.equals("Infinity")){
                     showMessage("El resultado tiende al Infinito");
+                    txtResultado.setText("");
+                }else if (ecuacion.equals("NaN")){
+                    showMessage("El resultado es Indefinido");
                     txtResultado.setText("");
                 }else{
                     txtResultado.setText(ecuacion);

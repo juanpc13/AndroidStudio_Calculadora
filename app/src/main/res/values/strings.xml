@@ -23,4 +23,8 @@
     <string name="decimal">.</string>
     <string name="igual">=</string>
     <string name="borrar">BORRAR</string>
+    <string name="inversa">1/X</string>
+    <string name="coseno">COS</string>
+    <string name="seno">SEN</string>
+    <string name="tangente">TAN</string>
 </resources>
